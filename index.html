@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Judge, Trace, Verify: Case Studies Worksheet</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#F4F7FB;--card:#fff;--ink:#14213D;--mut:#55657E;--line:#D6DFEA;--acc:#0E9F8E;--ok:#1E9E5A;--okbg:#E4F6EC;--bad:#D6453D;--badbg:#FCE9E7;--hint:#FFF4DE}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1626;--card:#162239;--ink:#EAF0FA;--mut:#9FB0CC;--line:#2A3B58;--acc:#3CC8B6;--ok:#5FD38D;--okbg:#17362A;--bad:#FF8A80;--badbg:#3A1E22;--hint:#3A3120}}
+:root[data-theme="dark"]{--bg:#0E1626;--card:#162239;--ink:#EAF0FA;--mut:#9FB0CC;--line:#2A3B58;--acc:#3CC8B6;--ok:#5FD38D;--okbg:#17362A;--bad:#FF8A80;--badbg:#3A1E22;--hint:#3A3120}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:30px 0 10px;color:var(--acc)}
+.sub{color:var(--mut);margin:0 0 14px}.name{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.name input{flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.score{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;flex:1;max-width:220px}.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+.sc{background:var(--hint);border-radius:8px;padding:8px 10px;margin:6px 0 8px;font-size:15px}
+.q p{margin:4px 0 8px;font-weight:600}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--acc)}.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.fb{display:none;margin-top:8px;padding:8px 10px;border-radius:8px;font-size:15px}.fb.show{display:block}.fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
+textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+button.go{margin-top:8px;padding:9px 16px;border:0;border-radius:10px;background:var(--acc);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#res{display:none;text-align:center;padding:18px;margin-top:20px;border:2px solid var(--acc);border-radius:14px;background:var(--card)}#res.show{display:block}
+</style></head>
+<body><main>
+<h1>Judge, Trace, Verify</h1>
+<p class="sub">Grade 9 · Real-life UAE case studies, the toolkit and safe use. Click an answer to check it and read why.</p>
+<div class="name"><label for="nm"><b>Name:</b></label><input id="nm" placeholder="Type your name" autocomplete="off"></div>
+<div class="score"><span><b id="sc">0</b> / <span id="tot">15</span> correct</span><div class="bar"><i id="pb"></i></div><span><b id="an">0</b> answered</span></div>
+<div id="qs"></div>
+<h2>E. Your own judgement</h2>
+<div class="q"><span class="tag">Write it</span>
+<p>Pick any case from this worksheet and complete the sentence starter.</p>
+<div class="sc">“I judged the output as ______ because the evidence showed ______. The component to fix is ______.”</div>
+<textarea id="ta" aria-label="Your sentence"></textarea>
+<button class="go ghost" id="mdl">Show model answers</button>
+<div class="fb ok" id="mfb"><b>Case 5:</b> I judged the output as <b>unclear</b> because the evidence showed no calories, prices or menu items. The component to fix is the <b>prompt</b>.<br><b>Case 6:</b> I judged the output as <b>incorrect</b> because the evidence showed the official record says 2 December 1971. The component to fix is the <b>data</b>.</div></div>
+<div id="res"><h2 style="margin-top:0">Worksheet complete</h2><p id="rt"></p><button class="go" id="rs">Start again</button></div>
+</main>
+<script>
+var Q=[
+["A. Real-life cases: what mattered most?"],
+{t:"Case 1 · Smart Parking Sensor",s:"A camera snapshot of a parking bay is checked by an object-detection model trained on 1,000 photos of empty and parked bays. It lights “Space Free” (green).",q:"Which part shaped the result most?",o:["Prompt","Data","Tool","Output"],a:1,w:"Data. The examples gave the tool the knowledge to recognise an empty space."},
+{t:"Case 2 · Hospital Triage Helper",s:"A medical language model learned from clinical triage books. Its instruction is: “Give cautious, polite advice. Never diagnose.”",q:"Which part set the cautious, polite tone?",o:["Data","Tool","Prompt","Input"],a:2,w:"The prompt. It steers tone and rules."},
+{t:"Case 3 · TAMM Government Translation",s:"A bilingual translation engine turns an official residency question in Arabic into formal English about visa rules.",q:"What is the golden action before the translation goes into an official form?",o:["Submit it straight away because it is formal","Ask the AI to rewrite it twice","Verify it against official law","Trust it because it used UAE dictionaries"],a:2,w:"Verify against official law before submitting. Never copy AI into official forms unchecked."},
+{t:"Case 4 · Airport Transit Helper",s:"A language tool uses the live flight timetable and the prompt “Give gate and walking minutes.” The verdict was ACCURATE and CLEAR.",q:"What evidence supported that verdict?",o:["It sounded confident","It was short","Passengers liked it","It was checked against live airport display boards"],a:3,w:"Evidence is a check against a trusted source, here the live airport display boards. A clear prompt gave exact, helpful guidance."},
+["B. Judge it: correct, unclear or incorrect?"],
+{t:"Case 5 · School Cafeteria Suggester",s:"Task: suggest healthy lunch options. The AI says: “Eat something green and nice.” It gives no calories, prices or menu items.",q:"What is your verdict?",o:["Correct","Unclear","Incorrect"],a:1,w:"Unclear means too vague to judge. Nothing in the output can be checked."},
+{t:"Case 5 · Fix it",s:"The tool stays the same. Only one component needs changing.",q:"Which new prompt fixes the problem?",o:["Suggest something nice for lunch.","Suggest 3 lunch combos under 500 calories with prices.","Make lunch better.","Switch to a different AI tool."],a:1,w:"Vague output means sharpen the prompt. This prompt names a number, a limit and prices."},
+{t:"Case 6 · UAE History Quiz Assistant",s:"The AI writes a National Day question and says the UAE was founded in 1981. The official record says 2 December 1971.",q:"What is your verdict?",o:["Correct","Unclear","Incorrect"],a:2,w:"Incorrect means false against a trusted source. The official record gives 1971."},
+{t:"Case 6 · Trace the fault",s:"The assistant had used a faulty web summary. The team replaced it with the UAE National Archives and the tool stayed unchanged.",q:"Which component was fixed?",o:["Prompt","Tool","Data"],a:2,w:"Data. False facts mean fix the data source."},
+{t:"Challenge Hub · Card 1: Sales Report",s:"The AI says: “Sales rose to 4,200 units across UAE stores.” The trusted store sheet confirms exactly 4,200 units.",q:"Give your verdict.",o:["Correct","Unclear","Incorrect"],a:0,w:"Correct. It passes accuracy and clarity, and the evidence matches, so the workflow is ready to use."},
+["C. Safe and smart use"],
+{t:"Safe-use charter",s:"",q:"Which of these is a safe-use rule?",o:["Use real student names in class tests","Use any free AI website","Use simulated cards and test data in class","Believe answers that sound confident"],a:2,w:"Use simulated cards and test data in class. Also: no personal data, teacher-approved platforms, and never trust an answer just because it sounds confident."},
+{t:"Safe-use charter",s:"A student pastes a classmate’s phone number and photo into an AI tool to get a faster answer.",q:"Which rule is broken?",o:["No personal data: no names, phone numbers or photos","Use teacher-approved AI platforms","Trace every fault to its part","Aim: accurate, clear, reliable"],a:0,w:"No personal data. Names, phone numbers and photos never go into a tool."},
+{t:"Evaluator’s toolkit",s:"The toolkit has four items: problem brief, trusted sheet, evidence notes and component tags.",q:"Which item records the exact failing words or numbers?",o:["Problem brief","Trusted sheet","Evidence notes","Component tags"],a:2,w:"Evidence notes. The problem brief says what good looks like, the trusted sheet holds official facts, and component tags mark Data, Prompt or Tool."},
+{t:"Human in charge",s:"",q:"Who decides whether an AI output is ready to use?",o:["The AI tool","You, the person using it","The fastest answer","The most confident answer"],a:1,w:"You. The human is in charge of the decision."},
+["D. Put it together"],
+{t:"Exit ticket",s:"",q:"Which order shows how input becomes output?",o:["Output → Input → Interacting components","Input → Interacting components → Output","Interacting components → Input → Output"],a:1,w:"Input flows through the interacting components (Data, Tool and Prompt) to become Output."},
+{t:"Exit ticket",s:"An AI gives a confident answer with the wrong date.",q:"What should you do first?",o:["Copy it into your report because it sounds sure","Verify against a trusted source, then trace the fault (often the data)","Ask the AI if it is sure","Delete the question"],a:1,w:"Never trust an answer just because it sounds confident. Verify first, then trace the fault to its part."}
+];
+var sc=0,an=0,n=0,host=document.getElementById("qs");
+Q.forEach(function(x){
+ if(Array.isArray(x)){var h=document.createElement("h2");h.textContent=x[0];host.appendChild(h);return;}
+ n++;var d=document.createElement("div");d.className="q";
+ d.innerHTML='<span class="tag">'+x.t+'</span>'+(x.s?'<div class="sc">'+x.s+'</div>':'')+'<p>'+n+'. '+x.q+'</p>';
+ var fb=document.createElement("div");fb.className="fb";
+ x.o.forEach(function(o,i){var b=document.createElement("button");b.className="opt";b.type="button";b.textContent=o;
+  b.onclick=function(){var all=d.querySelectorAll(".opt");all.forEach(function(e){e.disabled=true});an++;
+   if(i===x.a){b.classList.add("ok");sc++;fb.className="fb show ok";fb.innerHTML="<b>Correct.</b> "+x.w;}
+   else{b.classList.add("bad");all[x.a].classList.add("ok");fb.className="fb show bad";fb.innerHTML="<b>Not quite.</b> "+x.w;}
+   upd();};
+  d.appendChild(b);});
+ d.appendChild(fb);host.appendChild(d);});
+document.getElementById("tot").textContent=n;
+function upd(){document.getElementById("sc").textContent=sc;document.getElementById("an").textContent=an;document.getElementById("pb").style.width=(an/n*100)+"%";
+ if(an===n){var r=document.getElementById("res"),nm=document.getElementById("nm").value.trim();r.classList.add("show");
+  document.getElementById("rt").textContent=(nm?nm+", you":"You")+" scored "+sc+" out of "+n+". "+(sc>=n*0.8?"Great judging and tracing!":sc>=n*0.6?"Good work. Review the answers you missed.":"Review the case studies and try again.");}}
+document.getElementById("mdl").onclick=function(){document.getElementById("mfb").classList.toggle("show");};
+document.getElementById("rs").onclick=function(){location.reload();};
+</script></body></html>
